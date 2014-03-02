@@ -4,26 +4,62 @@
 #include <ctime>
 
 #include "caffe/common.hpp"
+#include <caffe/common_cpp.hpp>
 
 namespace caffe {
 
 shared_ptr<Caffe> Caffe::singleton_;
 
 
-int64_t cluster_seedgen(void) {
-  int64_t s, seed, pid;
+long cluster_seedgen(void) {
+  long s, seed, pid;
   pid = getpid();
   s = time(NULL);
   seed = abs(((s * 181) * ((pid - 83) * 359)) % 104729);
   return seed;
 }
+    
+    class Caffe::random_generator_t::Impl
+    {
+    public:
+        caffe::random_generator_t s;
+    };
+    
+    Caffe::random_generator_t::random_generator_t()
+    : impl_(new Impl)
+    {
+      
+    }
+    Caffe::random_generator_t::random_generator_t(unsigned int seed)
+    : impl_(new Impl)
+    {
+        impl_->s = boost::mt19937(seed);
+        
+    }
+    Caffe::random_generator_t::~random_generator_t()
+    {
+        delete impl_;
+    }
+    Caffe::random_generator_t::random_generator_t(const random_generator_t& other)
+    : impl_(new Impl)
+    {
+        *impl_ = *other.impl_;
+    }
+    
+    Caffe::random_generator_t& Caffe::random_generator_t::operator=(const random_generator_t& other)
+    {
+        *impl_ = *other.impl_;
+        return *this;
+    }
+    void* Caffe::random_generator_t::generator() const{
+        return &impl_->s;
+    }
 
 
 Caffe::Caffe()
     : mode_(Caffe::CPU), phase_(Caffe::TRAIN), cublas_handle_(NULL),
-      curand_generator_(NULL),
+      curand_generator_(NULL)
       //vsl_stream_(NULL)
-      random_generator_()
 {
   // Try to create a cublas handler, and report an error if failed (but we will
   // keep the program running as one might just want to run CPU code).
@@ -47,6 +83,7 @@ Caffe::Caffe()
 }
 
 Caffe::~Caffe() {
+
   if (cublas_handle_) CUBLAS_CHECK(cublasDestroy(cublas_handle_));
   if (curand_generator_) {
     CURAND_CHECK(curandDestroyGenerator(curand_generator_));
