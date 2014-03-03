@@ -19,43 +19,51 @@ long cluster_seedgen(void) {
   return seed;
 }
     
-    class Caffe::random_generator_t::Impl
-    {
-    public:
-        caffe::random_generator_t s;
-    };
+class Caffe::random_generator_t::Impl
+{
+public:
+  caffe::system_random_generator_t s;
+};
     
-    Caffe::random_generator_t::random_generator_t()
-    : impl_(new Impl)
-    {
-      
-    }
-    Caffe::random_generator_t::random_generator_t(unsigned int seed)
-    : impl_(new Impl)
-    {
-        impl_->s = boost::mt19937(seed);
-        
-    }
-    Caffe::random_generator_t::~random_generator_t()
-    {
-        delete impl_;
-    }
-    Caffe::random_generator_t::random_generator_t(const random_generator_t& other)
-    : impl_(new Impl)
-    {
-        *impl_ = *other.impl_;
-    }
+Caffe::random_generator_t::random_generator_t()
+: impl_(new Impl)
+{
     
-    Caffe::random_generator_t& Caffe::random_generator_t::operator=(const random_generator_t& other)
-    {
-        *impl_ = *other.impl_;
-        return *this;
-    }
-    void* Caffe::random_generator_t::generator() const{
-        return &impl_->s;
-    }
+}
+  
+Caffe::random_generator_t::random_generator_t(unsigned int seed)
+: impl_(new Impl)
+{
+  impl_->s = caffe::system_random_generator_t(seed);
+}
+  
+Caffe::random_generator_t::~random_generator_t()
+{
+  delete impl_;
+}
+  
+Caffe::random_generator_t::random_generator_t(const random_generator_t& other)
+: impl_(new Impl)
+{
+  *impl_ = *other.impl_;
+}
+  
+Caffe::random_generator_t& Caffe::random_generator_t::operator=(const random_generator_t& other)
+{
+  *impl_ = *other.impl_;
+  return *this;
+}
+  
+void* Caffe::random_generator_t::generator(){
+  return &impl_->s;
+}
 
+const void* Caffe::random_generator_t::generator() const{
+  return &impl_->s;
+}
 
+  
+  
 Caffe::Caffe()
     : mode_(Caffe::CPU), phase_(Caffe::TRAIN), cublas_handle_(NULL),
       curand_generator_(NULL)

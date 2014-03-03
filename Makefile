@@ -79,7 +79,8 @@ TEST_BINS := ${TEST_OBJS:.o=.testbin}
 # Derive include and lib directories
 ##############################
 CUDA_INCLUDE_DIR := $(CUDA_DIR)/include
-CUDA_LIB_DIR := $(CUDA_DIR)/lib64 $(CUDA_DIR)/lib
+#CUDA_LIB_DIR := $(CUDA_DIR)/lib64 $(CUDA_DIR)/lib
+CUDA_LIB_DIR := $(CUDA_DIR)/lib
 MKL_INCLUDE_DIR := $(MKL_DIR)/include
 MKL_LIB_DIR := $(MKL_DIR)/lib $(MKL_DIR)/lib/intel64
 
@@ -104,7 +105,8 @@ ifeq ($(USE_MKL), 1)
   INCLUDE_DIRS += $(MKL_INCLUDE_DIR)
   LIBRARY_DIRS += $(MKL_LIB_DIR)
 else
-  LIBRARIES += atlas cblas
+  #LIBRARIES += atlas cblas
+LIBRARIES += cblas
 endif
 
 COMMON_FLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))

@@ -87,18 +87,21 @@ class Caffe {
   // Returns the MKL random stream.
   //inline static VSLStreamStatePtr vsl_stream() { return Get().vsl_stream_; }
 
-    class random_generator_t {
-    public:
-        random_generator_t();
-        explicit random_generator_t(unsigned int seed);
-        ~random_generator_t();
-        random_generator_t(const random_generator_t&);
-        random_generator_t& operator=(const random_generator_t&);
-        void* generator() const;
-    private:
-        class Impl;
-        Impl* impl_;
-    };
+  //Hide real random generator behind this facade (helps build on osx)
+  class random_generator_t {
+  public:
+    random_generator_t();
+    explicit random_generator_t(unsigned int seed);
+    ~random_generator_t();
+    random_generator_t(const random_generator_t&);
+    random_generator_t& operator=(const random_generator_t&);
+    const void* generator() const;
+    void* generator();
+  private:
+    class Impl;
+    Impl* impl_;
+  };
+  
   inline static random_generator_t &vsl_stream() { return Get().random_generator_; }
 
   // Returns the mode: running on CPU or GPU.

@@ -8,15 +8,15 @@
 
 namespace caffe {
 
-    typedef boost::mt19937 random_generator_t;
-    inline random_generator_t& cast_generator(Caffe::random_generator_t& g)
-    {
-        return *(caffe::random_generator_t*)g.generator();
-    }
-    inline const random_generator_t& cast_generator(const Caffe::random_generator_t& g)
-    {
-        return *(caffe::random_generator_t*)g.generator();
-    }
+  typedef boost::mt19937 system_random_generator_t;
+  inline system_random_generator_t& cast_generator(Caffe::random_generator_t& g)
+  {
+    return *(caffe::system_random_generator_t*)g.generator();
+  }
+  inline const system_random_generator_t& cast_generator(const Caffe::random_generator_t& g)
+  {
+    return *(caffe::system_random_generator_t*)g.generator();
+  }
 
 }  // namespace caffe
 
